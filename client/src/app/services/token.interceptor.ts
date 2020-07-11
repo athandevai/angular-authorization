@@ -62,6 +62,13 @@ export class TokenInterceptor implements HttpInterceptor {
     return throwError(err);
   }
 
+  // We check whether refreshing has already started, set refreshingInProgress variable to true,
+  // and populate null into accessTokenSubject behavior subject. Then, we send a refreshToken request.
+  // In case of success, we set refreshingInProgress to false and place the access token we received
+  // into the accessTokenSubject. Finally, we call next.handle with a new Authorization header to
+  // repeat failed requests. In case the refreshing is already happening (the else part of the if
+  // statement), we want to wait until accessTokenSubject becomes not null. Once some value is
+  // emitted, we use take(1) to complete the stream and call next.handle to process the request.
   private refreshToken(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     if (!this.refreshingInProgress) {
       this.refreshingInProgress = true;
