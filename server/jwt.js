@@ -15,6 +15,8 @@ function getRefreshToken(payload) {
   // check if there are 5 or more refresh tokens,
   // which have already been generated. In this case we should
   // remove all this refresh tokens and leave only new one for security reason
+  // (different refreshTokens for the same user, can be genarated, if the user logs in
+  // from different devices/clients)
   if (userRefreshTokens.length >= 5) {
     mockDB.tokens = mockDB.tokens.filter(token => token.userId !== payload.id);
   }
